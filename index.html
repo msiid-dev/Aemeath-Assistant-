@@ -627,7 +627,7 @@ function toast(msg, type='') {
 // ── API KEY ──
 function saveApiKey() {
   const k = document.getElementById('apiInp').value.trim();
-  if (!k.startsWith('AIza') && !k.startsWith('sk-')) { toast('API Key tidak valid!','error'); return; }
+  if (!k || k.length < 10) { toast('API Key terlalu pendek!','error'); return; }
   apiKey = k; localStorage.setItem('yukiGeminiKey', k);
   document.getElementById('apiBanner').style.display = 'none';
   toast('✅ Yuki AI sudah aktif!');
