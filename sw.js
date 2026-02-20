@@ -1,5 +1,5 @@
-const CACHE = 'yuki-v1';
-const ASSETS = ['/', '/index.html', '/yuki.png', '/icon-192.png', '/icon-512.png', '/manifest.json'];
+const CACHE = 'yuki-v3-bust';
+const ASSETS = ['/', '/index.html', '/yuki.png', '/manifest.json'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
@@ -14,7 +14,12 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  // Always fetch fresh for HTML
+  if (e.request.url.endsWith('.html') || e.request.url.endsWith('/')) {
+    e.respondWith(fetch(e.request).catch(() => caches.match('/index.html')));
+    return;
+  }
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match('/index.html')))
+    caches.match(e.request).then(cached => cached || fetch(e.request))
   );
 });

@@ -662,10 +662,15 @@ function checkReminders() {
   reminders.forEach(r => {
     if (r.done) return;
     const dt = new Date(r.datetime);
-    const diff = (dt - now) / 60000; // minutes
+    const diff = (dt - now) / 60000;
     if (diff >= -1 && diff <= 1) {
       sendNotif(r.title, r.note || 'Waktunya sekarang!');
       toast('⏰ ' + r.title);
+      // Voice reminder
+      const msg = 'Halo Musadi! Pengingat: ' + r.title + '. ' + (r.note || 'Waktunya sekarang!');
+      speakReminder(msg);
+      yukiSay('⏰ ' + r.title);
+      setTimeout(hideYukiSay, 5000);
     }
   });
 }
@@ -916,9 +921,56 @@ function showTyping() {
 function hideTyping() { document.getElementById('typRow')?.remove(); }
 function esc(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-// ── SERVICE WORKER ──
+// ── SERVICE WORKER ── (unregister old ones first to prevent cache issues)
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(r => r.unregister());
+  });
+}
+
+// ── API BUTTON EVENT LISTENER (most reliable way) ──
+document.addEventListener('DOMContentLoaded', function() {
+  const btn = document.getElementById('apiSaveBtn');
+  const inp = document.getElementById('apiInp');
+  if (btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const k = inp ? inp.value.trim() : '';
+      if (!k || k.length < 5) {
+        alert('Masukkan API Key dulu ya!');
+        return;
+      }
+      apiKey = k;
+      try { localStorage.setItem('yukiGeminiKey', k); } catch(e2){}
+      document.getElementById('apiBanner').style.display = 'none';
+      alert('✅ API Key tersimpan! Yuki AI aktif sekarang~ 🌸');
+    });
+  }
+  if (inp) {
+    inp.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') btn && btn.click();
+    });
+  }
+});
+
+// ── VOICE REMINDER ──
+function speakReminder(text) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'id-ID';
+  utt.rate = 0.95;
+  utt.pitch = 1.2;
+  utt.volume = 1;
+  // Try to pick a female voice
+  const voices = window.speechSynthesis.getVoices();
+  const femaleVoice = voices.find(v => 
+    (v.lang.includes('id') || v.lang.includes('ID')) && v.name.toLowerCase().includes('female')
+  ) || voices.find(v => v.lang.includes('id')) 
+    || voices.find(v => v.name.toLowerCase().includes('female'));
+  if (femaleVoice) utt.voice = femaleVoice;
+  window.speechSynthesis.speak(utt);
 }
 </script>
 </body>
