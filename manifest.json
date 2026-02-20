@@ -1,26 +1,16 @@
 {
-  "name": "Yuki — WP Assistant",
+  "name": "Yuki — Personal Assistant",
   "short_name": "Yuki",
-  "description": "Asisten AI Work Permit & JSA oleh Musadi Febriono",
+  "description": "Asisten Pribadi Musadi Febriono",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0f172a",
+  "background_color": "#0a0515",
   "theme_color": "#ec4899",
-  "categories": ["productivity", "utilities"],
   "icons": [
-    { "src": "icon-72.png",  "sizes": "72x72",   "type": "image/png", "purpose": "any" },
-    { "src": "icon-144.png", "sizes": "144x144", "type": "image/png", "purpose": "any" },
+    { "src": "icon-72.png",  "sizes": "72x72",   "type": "image/png" },
+    { "src": "icon-144.png", "sizes": "144x144", "type": "image/png" },
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
     { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
-  ],
-  "shortcuts": [
-    {
-      "name": "Chat dengan Yuki",
-      "short_name": "Chat",
-      "description": "Buka chat langsung",
-      "url": "/?open=chat",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
-    }
   ]
 }
