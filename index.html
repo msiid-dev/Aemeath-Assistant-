@@ -379,8 +379,8 @@ body {
     <div class="api-banner" id="apiBanner">
       <p>🔑 Masukkan Gemini API Key untuk mengaktifkan AI Yuki:</p>
       <div class="api-row">
-        <input type="password" class="api-inp" id="apiInp" placeholder="AIza...">
-        <button class="api-save-btn" onclick="saveApiKey()">Aktifkan</button>
+        <input type="password" class="api-inp" id="apiInp" placeholder="AIza..." onkeydown="if(event.key==='Enter'){saveApiKey();}">
+        <button class="api-save-btn" id="apiSaveBtn" onclick="saveApiKey()" type="button">Aktifkan</button>
       </div>
     </div>
 
@@ -626,12 +626,24 @@ function toast(msg, type='') {
 
 // ── API KEY ──
 function saveApiKey() {
-  const k = document.getElementById('apiInp').value.trim();
-  if (!k || k.length < 10) { toast('API Key terlalu pendek!','error'); return; }
-  apiKey = k; localStorage.setItem('yukiGeminiKey', k);
-  document.getElementById('apiBanner').style.display = 'none';
-  toast('✅ Yuki AI sudah aktif!');
-  yukiSay('AI aktif! Siap membantu~ 🌸'); setTimeout(hideYukiSay, 3000);
+  try {
+    const inp = document.getElementById('apiInp');
+    const k = inp ? inp.value.trim() : '';
+    console.log('saveApiKey called, key length:', k.length);
+    if (!k || k.length < 5) {
+      alert('API Key kosong atau terlalu pendek! Pastikan sudah diketik.');
+      return;
+    }
+    apiKey = k;
+    localStorage.setItem('yukiGeminiKey', k);
+    const banner = document.getElementById('apiBanner');
+    if (banner) banner.style.display = 'none';
+    alert('✅ Yuki AI sudah aktif! Sekarang coba chat ya~');
+    yukiSay('AI aktif! 🌸');
+    setTimeout(hideYukiSay, 3000);
+  } catch(e) {
+    alert('Error: ' + e.message);
+  }
 }
 
 // ── NOTIFICATIONS ──
